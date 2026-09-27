@@ -6,6 +6,6 @@
 </br>
 </br>
 <kbd>
-<img src="./locus.png" width="256px"> 
+<img src="./locus-icon.png" width="256px"> 
 </kbd>
 </div>
