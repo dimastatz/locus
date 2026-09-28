@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^command -v claude && claude --version$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
