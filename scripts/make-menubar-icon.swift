@@ -1,9 +1,8 @@
-// Generates the menu bar template icon from the app logo.
+// Generates the menu bar icon from the app logo, keeping its original colors (PRD-0006).
 //
 // Usage: swift scripts/make-menubar-icon.swift
 //
-// The logo's alpha channel becomes a black silhouette (the eye is transparent in the
-// logo, so it survives as a cut-out). macOS tints template images to match the menu bar.
+// The logo is cropped to the fish and scaled to menu bar height at 1x and 2x.
 import AppKit
 
 let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
@@ -34,34 +33,15 @@ for scale in [1, 2] {
     let height = Int(heightInPoints) * scale
     guard let context = CGContext(
         data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
-        space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        space: CGColorSpace(name: CGColorSpace.sRGB)!,
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     else { fatalError("Context failed") }
     context.interpolationQuality = .high
-    let rect = CGRect(x: 0, y: 0, width: width, height: height)
-    // Use the logo as a mask and fill it with black: a silhouette that keeps the alpha edges.
-    context.clip(to: rect, mask: alphaMask(of: cropped))
-    context.setFillColor(NSColor.black.cgColor)
-    context.fill(rect)
+    context.draw(cropped, in: CGRect(x: 0, y: 0, width: width, height: height))
 
     let rep = NSBitmapImageRep(cgImage: context.makeImage()!)
     rep.size = NSSize(width: widthInPoints, height: heightInPoints)
     let name = scale == 1 ? "MenuBarIcon.png" : "MenuBarIcon@\(scale)x.png"
     try! rep.representation(using: .png, properties: [:])!.write(to: outputDir.appendingPathComponent(name))
     print("Wrote Support/MenuBar/\(name) (\(width)×\(height) px)")
-}
-
-/// A grayscale mask from the image's alpha channel (white = opaque).
-func alphaMask(of image: CGImage) -> CGImage {
-    let width = image.width, height = image.height
-    let context = CGContext(
-        data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
-        space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.alphaOnly.rawValue)!
-    context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-    let alpha = context.makeImage()!
-    // alphaOnly images can't be used as masks directly; copy the bytes into a gray image.
-    let gray = CGContext(
-        data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: alpha.bytesPerRow,
-        space: CGColorSpaceCreateDeviceGray(), bitmapInfo: CGImageAlphaInfo.none.rawValue)!
-    gray.data!.copyMemory(from: context.data!, byteCount: alpha.bytesPerRow * height)
-    return gray.makeImage()!
 }

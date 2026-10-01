@@ -17,7 +17,7 @@ final class ExitPrompt: NSObject {
 
     init(message: String, holdDuration: TimeInterval = HoldToConfirm.defaultDuration) {
         panel = PromptPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 10),
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 10),
             styleMask: [.titled, .nonactivatingPanel],
             backing: .buffered,
             defer: true
@@ -35,7 +35,7 @@ final class ExitPrompt: NSObject {
         let titleLabel = NSTextField(labelWithString: "Are you sure you want to exit?")
         titleLabel.font = .boldSystemFont(ofSize: NSFont.systemFontSize + 2)
         messageLabel.stringValue = message
-        messageLabel.preferredMaxLayoutWidth = 380
+        messageLabel.preferredMaxLayoutWidth = 360
         hintLabel.stringValue = "Hold Exit for \(Int(holdDuration)) seconds to end the session."
         hintLabel.textColor = .secondaryLabelColor
 
@@ -57,15 +57,26 @@ final class ExitPrompt: NSObject {
         let buttons = NSStackView(views: [exitButton, goBack])
         buttons.spacing = 12
 
-        let stack = NSStackView(views: [titleLabel, messageLabel, hintLabel, buttons])
-        stack.orientation = .vertical
-        stack.alignment = .leading
-        stack.spacing = 10
-        stack.edgeInsets = NSEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        stack.setCustomSpacing(20, after: hintLabel)
-        buttons.trailingAnchor.constraint(equalTo: stack.trailingAnchor, constant: -20).isActive = true
+        let content = NSStackView(views: [titleLabel, messageLabel, hintLabel, buttons])
+        content.orientation = .vertical
+        content.alignment = .leading
+        content.spacing = 10
+        content.setCustomSpacing(20, after: hintLabel)
+        buttons.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
 
-        panel.contentView = stack
+        // App icon on the left, like a macOS alert (PRD-0006).
+        let icon = NSImageView(image: NSApp.applicationIconImage)
+        icon.imageScaling = .scaleProportionallyUpOrDown
+        icon.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        icon.heightAnchor.constraint(equalToConstant: 64).isActive = true
+
+        let layout = NSStackView(views: [icon, content])
+        layout.orientation = .horizontal
+        layout.alignment = .top
+        layout.spacing = 16
+        layout.edgeInsets = NSEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+
+        panel.contentView = layout
     }
 
     var isVisible: Bool { panel.isVisible }
