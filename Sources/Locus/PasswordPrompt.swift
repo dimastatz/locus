@@ -107,7 +107,7 @@ final class PasswordPrompt: NSObject, NSTextFieldDelegate {
     /// adds more than one character at once is treated as a paste and cleared.
     func controlTextDidChange(_ notification: Notification) {
         guard let field = notification.object as? NSSecureTextField,
-              let index = fields.firstIndex(of: field)
+            let index = fields.firstIndex(of: field)
         else { return }
         let length = field.stringValue.count
         if length - previousLengths[index] > 1 {

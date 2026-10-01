@@ -32,17 +32,22 @@ final class ExitGuard {
     func start() {
         let center = NSWorkspace.shared.notificationCenter
         observers = [
-            center.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
-                guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
+            center.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) {
+                [weak self] note in
+                guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else {
+                    return
+                }
                 self?.onEvent?(.appActivated(app.processIdentifier))
             },
-            center.addObserver(forName: NSWorkspace.activeSpaceDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            center.addObserver(forName: NSWorkspace.activeSpaceDidChangeNotification, object: nil, queue: .main) {
+                [weak self] _ in
                 self?.onEvent?(.spaceChanged)
             },
-            center.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: .main) { [weak self] note in
+            center.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: .main) {
+                [weak self] note in
                 guard let self,
-                      let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-                      app.processIdentifier == self.lockedProcessID
+                    let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                    app.processIdentifier == self.lockedProcessID
                 else { return }
                 self.onEvent?(.targetTerminated)
             },
@@ -67,17 +72,20 @@ final class ExitGuard {
     private func installEventTap() {
         let mask = CGEventMask(1 << CGEventType.keyDown.rawValue)
         let refcon = Unmanaged.passUnretained(self).toOpaque()
-        guard let tap = CGEvent.tapCreate(
-            tap: .cgSessionEventTap,
-            place: .headInsertEventTap,
-            options: .defaultTap,
-            eventsOfInterest: mask,
-            callback: { _, type, event, refcon in
-                guard let refcon else { return Unmanaged.passUnretained(event) }
-                return Unmanaged<ExitGuard>.fromOpaque(refcon).takeUnretainedValue().handle(type: type, event: event)
-            },
-            userInfo: refcon
-        ) else {
+        guard
+            let tap = CGEvent.tapCreate(
+                tap: .cgSessionEventTap,
+                place: .headInsertEventTap,
+                options: .defaultTap,
+                eventsOfInterest: mask,
+                callback: { _, type, event, refcon in
+                    guard let refcon else { return Unmanaged.passUnretained(event) }
+                    return Unmanaged<ExitGuard>.fromOpaque(refcon).takeUnretainedValue().handle(
+                        type: type, event: event)
+                },
+                userInfo: refcon
+            )
+        else {
             NSLog("Locus: couldn't create keyboard event tap; relying on workspace notifications")
             return
         }

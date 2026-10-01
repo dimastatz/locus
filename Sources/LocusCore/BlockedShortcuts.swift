@@ -36,17 +36,17 @@ public enum BlockedShortcuts {
     }
 
     public static let chords: Set<KeyChord> = [
-        KeyChord(Key.q, .command),                   // Quit
-        KeyChord(Key.h, .command),                   // Hide
-        KeyChord(Key.m, .command),                   // Minimize
-        KeyChord(Key.m, [.command, .option]),        // Minimize all
-        KeyChord(Key.f, [.command, .control]),       // Toggle full screen
-        KeyChord(Key.tab, .command),                 // App switcher
-        KeyChord(Key.tab, [.command, .shift]),       // App switcher, reversed
-        KeyChord(Key.leftArrow, .control),           // Previous Space
-        KeyChord(Key.rightArrow, .control),          // Next Space
-        KeyChord(Key.upArrow, .control),             // Mission Control
-        KeyChord(Key.downArrow, .control),           // App Exposé
+        KeyChord(Key.q, .command),  // Quit
+        KeyChord(Key.h, .command),  // Hide
+        KeyChord(Key.m, .command),  // Minimize
+        KeyChord(Key.m, [.command, .option]),  // Minimize all
+        KeyChord(Key.f, [.command, .control]),  // Toggle full screen
+        KeyChord(Key.tab, .command),  // App switcher
+        KeyChord(Key.tab, [.command, .shift]),  // App switcher, reversed
+        KeyChord(Key.leftArrow, .control),  // Previous Space
+        KeyChord(Key.rightArrow, .control),  // Next Space
+        KeyChord(Key.upArrow, .control),  // Mission Control
+        KeyChord(Key.downArrow, .control),  // App Exposé
     ]
 
     public static func isBlocked(keyCode: UInt16, modifiers: KeyModifiers) -> Bool {

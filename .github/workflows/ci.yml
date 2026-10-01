@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Format & lint
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SwiftLint
+        run: command -v swiftlint || brew install swiftlint
+      - name: Tool versions
+        run: |
+          swift --version
+          swift format --version
+          swiftlint version
+      - name: Lint
+        run: ./scripts/lint.sh
+
+  test:
+    name: Unit tests & coverage (≥ 95%)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test with coverage gate
+        run: ./scripts/coverage.sh 95
+
+  build:
+    name: Build Locus.app
+    runs-on: macos-15
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build app bundle
+        run: ./scripts/build-app.sh
+      - name: Zip app bundle
+        run: ditto -c -k --keepParent build/Locus.app build/Locus.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Locus-${{ github.sha }}
+          path: build/Locus.zip
+          retention-days: 14
