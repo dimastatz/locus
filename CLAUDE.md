@@ -15,6 +15,12 @@ A native macOS app that locks the active application in full-screen mode. Until 
 - **Exit protection**: If the user tries to exit full-screen mode (or otherwise leave the locked app) before the timer ends, Locus shows a prompt requiring a long password to unlock.
 - When the timer reaches zero, the lock is released automatically.
 
+Detailed PRDs for each requirement live in `docs/specs/`:
+- [PRD-0001: Menu Bar App](docs/specs/prd-0001-menu-bar-app.md)
+- [PRD-0002: Start a Focus Session](docs/specs/prd-0002-focus-session.md)
+- [PRD-0003: Exit Protection](docs/specs/prd-0003-exit-protection.md)
+- [PRD-0004: Session Completion](docs/specs/prd-0004-session-completion.md)
+
 ## Technical Guidance
 - Language: Swift; target macOS only.
 - Menu bar UI: `NSStatusItem` (AppKit) or `MenuBarExtra` (SwiftUI). Set `LSUIElement = YES` in Info.plist so the app has no Dock icon.
