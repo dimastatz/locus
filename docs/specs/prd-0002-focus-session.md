@@ -22,7 +22,7 @@ Deep work fails when other apps are one click away. Losing awareness for just 5 
 - Task tracking, statistics, or history (future PRDs).
 
 ## User Stories
-- As a user working in an app, I click the Locus icon and that window goes full screen and is locked.
+- As a user working in an app, I click the Locus icon, confirm ([PRD-0007](prd-0007-confirm-start.md)), and that window goes full screen and is locked.
 - As a user in a session, I can glance at the remaining time.
 
 ## Functional Requirements

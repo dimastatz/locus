@@ -36,13 +36,13 @@ On first launch, grant Locus Accessibility access in **System Settings → Priva
 
 ## Usage
 1. Click into the app you want to focus on.
-2. Click the Locus fish in the menu bar. The window goes full screen and a 25-minute countdown starts in the menu bar.
+2. Click the Locus fish in the menu bar and confirm with **Start**. The window goes full screen and a 25-minute countdown starts in the menu bar.
 3. Trying to leave brings you back and asks "Are you sure you want to exit?" **Go Back** returns you to work; holding **Exit** for 25 seconds ends the session.
 4. When the timer ends, the lock is released and you get a notification.
 
 | Action | How |
 |---|---|
-| Start a session | Left-click the menu bar icon |
+| Start a session | Left-click the menu bar icon, then **Start** (or Return) |
 | Open the menu | Right-click or ⌃-click the icon (any click during a session) |
 | End a session early | Menu → **End Session Early…**, then hold **Exit** for 25 seconds |
 

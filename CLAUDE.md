@@ -22,6 +22,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0004: Session Completion](docs/specs/prd-0004-session-completion.md)
 - [PRD-0005: Hold to Exit](docs/specs/prd-0005-hold-to-exit.md) (replaces the password unlock from PRD-0003)
 - [PRD-0006: Brand Icon](docs/specs/prd-0006-brand-icon.md) (original-color logo in the menu bar; app icon on every pop-up)
+- [PRD-0007: Confirm Before Locking](docs/specs/prd-0007-confirm-start.md) ("Are you sure you want to start a focus session?")
 
 ## Technical Guidance
 - Language: Swift; target macOS only.
@@ -34,7 +35,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 ## Project Layout
 Swift package, no Xcode project (builds with the Command Line Tools alone).
 - `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `HoldToConfirm` (hold-to-exit progress, reset on interruption), `BlockedShortcuts`, `Countdown`.
-- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `ExitPrompt` ("Are you sure you want to exit?" non-activating panel shown over full screen), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier`, `MenuBarIcon` (fish logo in original colors; red alert badge during a session).
+- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PromptPanel` (shared non-activating dialog panel with the app icon), `StartPrompt` ("Are you sure you want to start a focus session?"), `ExitPrompt` ("Are you sure you want to exit?"), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier`, `MenuBarIcon` (fish logo in original colors; red alert badge during a session).
 - `Tests/LocusCoreTests/`: Swift Testing unit tests for `LocusCore`.
 - `Support/Info.plist`: app bundle plist (`LSUIElement`).
 - `Support/MenuBar/`: menu bar icon in the logo's original colors (1×/2×), generated from `docs/images/locus-icon.png` by `swift scripts/make-menubar-icon.swift`.
@@ -55,7 +56,7 @@ Before committing, run `./scripts/format.sh`, `./scripts/lint.sh` and `./scripts
 
 ## v1 Decisions (resolving PRD open questions)
 - Early exit (PRD-0005): hold Exit for 25 s (`HoldToConfirm.defaultDuration`); no escalation and no accessibility alternative yet. The legacy Keychain password item is deleted at launch.
-- Click behavior: left-click starts a 25-minute session immediately; right-click / ⌃-click opens the menu.
+- Click behavior: left-click asks "Are you sure you want to start a focus session?" (PRD-0007), then starts a 25-minute session; right-click / ⌃-click opens the menu.
 - Apps without full-screen support: the session is refused with an explanation.
 - Locked app quits or crashes: the session ends and the user is notified.
 - Completion: notification with default sound; the window stays in full screen.
