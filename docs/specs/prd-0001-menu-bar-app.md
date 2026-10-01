@@ -32,7 +32,7 @@ A focus tool must be available instantly, without itself becoming another window
 3. The icon reflects state:
    - **Idle** — the Locus fish logo in its original colors ([PRD-0006](prd-0006-brand-icon.md)).
    - **Session active** — the fish with a small red "!" alert badge, plus the remaining time (e.g. `24:13`).
-4. Clicking the icon while idle starts a focus session on the currently active window.
+4. Clicking the icon while idle starts a focus session on the currently active window, after confirmation ([PRD-0007](prd-0007-confirm-start.md)).
 5. The menu (or a secondary click) contains:
    - **Start Focus Session** (idle only)
    - **Quit Locus** (idle only — disabled while a session is active, see [PRD-0003](prd-0003-exit-protection.md))

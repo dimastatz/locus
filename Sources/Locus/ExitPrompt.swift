@@ -2,10 +2,6 @@ import AppKit
 import LocusCore
 
 /// "Are you sure you want to exit?" dialog with Go Back and hold-to-confirm Exit (PRD-0005).
-///
-/// It is a non-activating panel that joins every Space, including the locked app's
-/// full-screen Space. Showing it doesn't activate Locus, so the locked app stays
-/// frontmost and macOS doesn't switch Spaces.
 final class ExitPrompt: NSObject {
     var onGoBack: (() -> Void)?
     var onExit: (() -> Void)?
@@ -16,21 +12,9 @@ final class ExitPrompt: NSObject {
     private let exitButton: HoldButton
 
     init(message: String, holdDuration: TimeInterval = HoldToConfirm.defaultDuration) {
-        panel = PromptPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 500, height: 10),
-            styleMask: [.titled, .nonactivatingPanel],
-            backing: .buffered,
-            defer: true
-        )
+        panel = PromptPanel(width: 500)
         exitButton = HoldButton(title: "Exit", duration: holdDuration)
         super.init()
-
-        panel.title = "Locus"
-        panel.level = .modalPanel
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        panel.hidesOnDeactivate = false
-        panel.becomesKeyOnlyIfNeeded = false
-        panel.isReleasedWhenClosed = false
 
         let titleLabel = NSTextField(labelWithString: "Are you sure you want to exit?")
         titleLabel.font = .boldSystemFont(ofSize: NSFont.systemFontSize + 2)
@@ -64,19 +48,7 @@ final class ExitPrompt: NSObject {
         content.setCustomSpacing(20, after: hintLabel)
         buttons.trailingAnchor.constraint(equalTo: content.trailingAnchor).isActive = true
 
-        // App icon on the left, like a macOS alert (PRD-0006).
-        let icon = NSImageView(image: NSApp.applicationIconImage)
-        icon.imageScaling = .scaleProportionallyUpOrDown
-        icon.widthAnchor.constraint(equalToConstant: 64).isActive = true
-        icon.heightAnchor.constraint(equalToConstant: 64).isActive = true
-
-        let layout = NSStackView(views: [icon, content])
-        layout.orientation = .horizontal
-        layout.alignment = .top
-        layout.spacing = 16
-        layout.edgeInsets = NSEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-
-        panel.contentView = layout
+        panel.setContent(content)
     }
 
     var isVisible: Bool { panel.isVisible }
@@ -86,11 +58,7 @@ final class ExitPrompt: NSObject {
     }
 
     func show() {
-        if !panel.isVisible {
-            panel.center()
-        }
-        panel.orderFrontRegardless()
-        panel.makeKey()
+        panel.present()
     }
 
     func close() {
@@ -101,16 +69,5 @@ final class ExitPrompt: NSObject {
     @objc private func goBack() {
         close()
         onGoBack?()
-    }
-}
-
-private final class PromptPanel: NSPanel {
-    var onCancel: (() -> Void)?
-
-    override var canBecomeKey: Bool { true }
-
-    /// Esc.
-    override func cancelOperation(_ sender: Any?) {
-        onCancel?()
     }
 }

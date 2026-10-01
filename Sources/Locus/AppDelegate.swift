@@ -15,6 +15,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var exitGuard: ExitGuard?
     private var ticker: Timer?
     private var prompt: ExitPrompt?
+    private var startPrompt: StartPrompt?
     private var checksPausedUntil = Date.distantPast
     private var lastExternalApp: NSRunningApplication?
     private var workspaceObservers: [NSObjectProtocol] = []
@@ -39,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Menu bar (PRD-0001)
 
-    /// Left-click starts a session when idle. Right-click, ⌃-click, or any click during a session opens the menu.
+    /// Left-click starts a session (after confirmation) when idle. Right-click, ⌃-click, or any click during a session opens the menu.
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
         let event = NSApp.currentEvent
         let wantsMenu = event?.type == .rightMouseUp || event?.modifierFlags.contains(.control) == true
@@ -101,8 +102,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Starting a session (PRD-0002)
 
+    /// Checks that the frontmost window can be locked, then asks for confirmation (PRD-0007).
     @objc private func startSession() {
         guard !sessions.isActive else { return }
+        if let startPrompt, startPrompt.isVisible {
+            startPrompt.show()
+            return
+        }
         guard Accessibility.isTrusted else {
             Alerts.showAccessibilityRequired()
             return
@@ -111,19 +117,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Alerts.showError("Nothing to lock", "Click into the app you want to focus on, then click the Locus icon.")
             return
         }
-        lock(app)
-    }
-
-    /// The app the user was working in. Clicking a menu bar item doesn't activate
-    /// Locus, so this is normally the frontmost app.
-    private func targetApp() -> NSRunningApplication? {
-        if let front = NSWorkspace.shared.frontmostApplication, front.processIdentifier != ownProcessID {
-            return front
-        }
-        return lastExternalApp.flatMap { $0.isTerminated ? nil : $0 }
-    }
-
-    private func lock(_ app: NSRunningApplication) {
         let name = app.localizedName ?? "This app"
         guard let window = LockedWindow(app: app) else {
             Alerts.showError(
@@ -137,6 +130,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
+        let prompt = StartPrompt(appName: name, duration: FocusSession.defaultDuration)
+        prompt.onStart = { [weak self] in
+            self?.startPrompt = nil
+            // The app may have quit while the dialog was open.
+            guard !app.isTerminated else { return }
+            self?.lock(window, name: name)
+        }
+        prompt.onCancel = { [weak self] in
+            self?.startPrompt = nil
+            window.focus()
+        }
+        startPrompt = prompt
+        prompt.show()
+    }
+
+    /// The app the user was working in. Clicking a menu bar item doesn't activate
+    /// Locus, so this is normally the frontmost app.
+    private func targetApp() -> NSRunningApplication? {
+        if let front = NSWorkspace.shared.frontmostApplication, front.processIdentifier != ownProcessID {
+            return front
+        }
+        return lastExternalApp.flatMap { $0.isTerminated ? nil : $0 }
+    }
+
+    private func lock(_ window: LockedWindow, name: String) {
+        let app = window.app
         let target = LockTarget(processID: app.processIdentifier, bundleIdentifier: app.bundleIdentifier, appName: name)
         do {
             try sessions.start(target: target, now: Date())
