@@ -20,7 +20,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0002: Start a Focus Session](docs/specs/prd-0002-focus-session.md)
 - [PRD-0003: Exit Protection](docs/specs/prd-0003-exit-protection.md)
 - [PRD-0004: Session Completion](docs/specs/prd-0004-session-completion.md)
-- [PRD-0005: Hold to Exit](docs/specs/prd-0005-hold-to-exit.md) (replaces the password unlock from PRD-0003; not yet implemented)
+- [PRD-0005: Hold to Exit](docs/specs/prd-0005-hold-to-exit.md) (replaces the password unlock from PRD-0003)
 
 ## Technical Guidance
 - Language: Swift; target macOS only.
@@ -32,8 +32,8 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 
 ## Project Layout
 Swift package, no Xcode project (builds with the Command Line Tools alone).
-- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `PasswordVault` (salted SHA-256 hash behind a `SecretStore`), `BlockedShortcuts`, `Countdown`.
-- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PasswordPrompt` (non-activating panel shown over full screen), `KeychainSecretStore`, `SessionNotifier`.
+- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `HoldToConfirm` (hold-to-exit progress, reset on interruption), `BlockedShortcuts`, `Countdown`.
+- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `ExitPrompt` ("Are you sure you want to exit?" non-activating panel shown over full screen), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier`.
 - `Tests/LocusCoreTests/`: Swift Testing unit tests for `LocusCore`.
 - `Support/Info.plist`: app bundle plist (`LSUIElement`).
 
@@ -52,7 +52,7 @@ Before committing, run `./scripts/format.sh`, `./scripts/lint.sh` and `./scripts
 - `.github/workflows/release.yml`: on a `v*` tag, runs the same checks and publishes a GitHub release with the zipped app.
 
 ## v1 Decisions (resolving PRD open questions)
-- Password: set once by the user (at least 32 characters, typed, no paste); prompted before the first session; can be changed from the menu while idle. **To be replaced by PRD-0005 (hold to exit).**
+- Early exit (PRD-0005): hold Exit for 25 s (`HoldToConfirm.defaultDuration`); no escalation and no accessibility alternative yet. The legacy Keychain password item is deleted at launch.
 - Click behavior: left-click starts a 25-minute session immediately; right-click / ⌃-click opens the menu.
 - Apps without full-screen support: the session is refused with an explanation.
 - Locked app quits or crashes: the session ends and the user is notified.

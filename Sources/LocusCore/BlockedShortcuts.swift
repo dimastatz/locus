@@ -19,7 +19,7 @@ public struct KeyChord: Hashable, Sendable {
 }
 
 /// Shortcuts that would take the user out of the locked window (PRD-0003).
-/// They are swallowed during a session and trigger the unlock prompt instead.
+/// They are swallowed during a session and trigger the exit dialog instead.
 ///
 /// Key codes are physical positions (`kVK_*` from Carbon's Events.h).
 public enum BlockedShortcuts {

@@ -25,7 +25,7 @@ final class SessionNotifier {
         case .targetTerminated:
             title = "Focus session ended"
             body = "\(app) quit, so the lock was released."
-        case .unlocked:
+        case .exitedEarly:
             return
         }
 

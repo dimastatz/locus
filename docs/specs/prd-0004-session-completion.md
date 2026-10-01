@@ -7,7 +7,7 @@
 | Related | [PRD-0001](prd-0001-menu-bar-app.md), [PRD-0002](prd-0002-focus-session.md), [PRD-0003](prd-0003-exit-protection.md) |
 
 ## Overview
-When the countdown reaches zero, the lock is released automatically and the user is free to leave the app — no password needed.
+When the countdown reaches zero, the lock is released automatically and the user is free to leave the app with no confirmation needed.
 
 ## Problem
 A focus session should end on its own terms. The reward for staying focused is a clean, frictionless exit.
@@ -27,7 +27,7 @@ A focus session should end on its own terms. The reward for staying focused is a
 ## Functional Requirements
 1. When the timer reaches `00:00`:
    - Remove all exit-attempt observers set up in [PRD-0003](prd-0003-exit-protection.md).
-   - Dismiss any open unlock prompt.
+   - Dismiss any open exit dialog ([PRD-0005](prd-0005-hold-to-exit.md)).
    - Reset the menu bar icon to idle.
 2. Notify the user that the session is complete (user notification and/or subtle sound).
 3. Leave the window in full screen — Locus does not force the user out; they exit when they choose.

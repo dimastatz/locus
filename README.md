@@ -11,13 +11,13 @@
 ## Why Locus
 Deep work on a laptop is hard when email, Slack, social networks, browsers and YouTube are one click away. Lose awareness for five minutes and you're doing shallow work or scrolling.
 
-Locus locks the app you're working in. One click puts its window in full screen and starts a timer. Until the timer runs out, leaving that app means typing a long password. That's enough friction to break the impulse to switch away.
+Locus locks the app you're working in. One click puts its window in full screen and starts a timer. Until the timer runs out, leaving that app means holding an Exit button for 25 seconds. That's long enough to notice what you're doing and change your mind.
 
 ## Features
 - **Lives in the menu bar.** No Dock icon and no window to manage. The icon shows a countdown during a session.
 - **One-click lock.** Click the icon and the app you're in goes full screen for a 25-minute session.
-- **Exit protection.** ⌘Q, ⌘H, ⌘M, ⌘Tab, the full-screen shortcut and switching Spaces bring you back and ask for your unlock password.
-- **A long password, typed.** At least 32 characters, no pasting. Locus stores only a salted hash in your Keychain.
+- **Exit protection.** ⌘Q, ⌘H, ⌘M, ⌘Tab, the full-screen shortcut and switching Spaces bring you back and ask "Are you sure you want to exit?"
+- **Hold to exit.** Ending early means holding **Exit** for 25 seconds. Let go or drag off and it starts over. **Go Back** (or Return/Esc) returns you to work.
 - **Ends on its own.** When the timer runs out, the lock is released and you get a notification.
 
 ## Install
@@ -36,17 +36,15 @@ On first launch, grant Locus Accessibility access in **System Settings → Priva
 
 ## Usage
 1. Click into the app you want to focus on.
-2. Click the lock icon in the menu bar. The first time, Locus asks you to set an unlock password.
-3. The window goes full screen and a 25-minute countdown starts in the menu bar.
-4. Trying to leave brings you back and asks for the unlock password. **Cancel** returns you to work.
-5. When the timer ends, the lock is released and you get a notification.
+2. Click the lock icon in the menu bar. The window goes full screen and a 25-minute countdown starts in the menu bar.
+3. Trying to leave brings you back and asks "Are you sure you want to exit?" **Go Back** returns you to work; holding **Exit** for 25 seconds ends the session.
+4. When the timer ends, the lock is released and you get a notification.
 
 | Action | How |
 |---|---|
 | Start a session | Left-click the menu bar icon |
 | Open the menu | Right-click or ⌃-click the icon (any click during a session) |
-| End a session early | Menu → **End Session Early…**, then type the password |
-| Change the password | Menu → **Change Unlock Password…** (only between sessions) |
+| End a session early | Menu → **End Session Early…**, then hold **Exit** for 25 seconds |
 
 Locus is a commitment device, not parental control. Force-quitting it will release the lock.
 
@@ -64,7 +62,7 @@ CI runs lint, tests with the coverage gate, and the app build on every pull requ
 
 | Path | Contents |
 |---|---|
-| `Sources/LocusCore/` | Session, timer, password and shortcut logic. No AppKit, unit tested. |
+| `Sources/LocusCore/` | Session, timer, hold-to-exit and shortcut logic. No AppKit, unit tested. |
 | `Sources/Locus/` | The menu bar app: status item, Accessibility window control, exit guard, prompts |
 | `Tests/LocusCoreTests/` | Unit tests |
 | `docs/specs/` | Product requirements ([PRD-0001](docs/specs/prd-0001-menu-bar-app.md) to [PRD-0004](docs/specs/prd-0004-session-completion.md)) |

@@ -2,7 +2,7 @@
 
 | Field      | Value                     |
 |------------|---------------------------|
-| Status     | Draft                     |
+| Status     | Implemented (v1)          |
 | Created    | 2026-10-01                |
 | Supersedes | The password unlock in [PRD-0003](prd-0003-exit-protection.md) (exit detection in PRD-0003 still applies) |
 | Related    | [PRD-0001](prd-0001-menu-bar-app.md), [PRD-0002](prd-0002-focus-session.md), [PRD-0004](prd-0004-session-completion.md) |
@@ -68,6 +68,8 @@ What actually needs blocking is the *unconscious* switch, the reflexive ⌘Tab t
 - [ ] The hold-progress logic (start, reset, completion at 25 s) is unit tested in `LocusCore` with an injected clock.
 
 ## Open Questions
+v1 resolves migration (the legacy Keychain item is deleted at launch) and fixes the duration at 25 s. Escalation and an accessibility alternative remain open.
+
 - **Hold duration.** 25 seconds is the proposed default. Should it be user-configurable, and should there be a minimum (e.g. never below 15 s)?
 - **Escalation.** Should repeated early exits take longer to confirm, e.g. 25 s for the first early exit of the day and 60 s for later ones?
 - **Accessibility of the gesture.** Users who can't comfortably hold a click for 25 s (motor impairments) need an alternative. One option is a "hold" toggle that keeps progressing until clicked again, as long as the pointer stays on the button.
