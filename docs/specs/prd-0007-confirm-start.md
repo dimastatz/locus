@@ -44,4 +44,4 @@ Starting a session is one click, but leaving one takes a 25-second hold (PRD-000
 
 ## Open Questions
 - Should there be a "Don't ask again" checkbox? It would bring back the risk of accidental locks, so it's left out of v1.
-- Should the dialog let the user pick the duration (e.g. 25 / 50 / 90 min)?
+- Should the dialog let the user pick the duration (e.g. 25 / 50 / 90 min)? The default is now set in the menu ([PRD-0008](prd-0008-focus-duration.md)); a one-off choice here is still open.

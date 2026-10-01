@@ -35,6 +35,7 @@ A focus tool must be available instantly, without itself becoming another window
 4. Clicking the icon while idle starts a focus session on the currently active window, after confirmation ([PRD-0007](prd-0007-confirm-start.md)).
 5. The menu (or a secondary click) contains:
    - **Start Focus Session** (idle only)
+   - **Focus Duration** submenu (idle only, [PRD-0008](prd-0008-focus-duration.md))
    - **Quit Locus** (idle only — disabled while a session is active, see [PRD-0003](prd-0003-exit-protection.md))
 6. On first launch, if Accessibility permission is not granted, Locus explains why it is needed and links to *System Settings → Privacy & Security → Accessibility*.
 
@@ -47,4 +48,4 @@ A focus tool must be available instantly, without itself becoming another window
 
 ## Open Questions
 - Should a single left-click start a session immediately, or open a menu with a "Start" item? (Handwritten spec says click starts it.)
-- Should duration be selectable from the menu (e.g. 25 / 50 / 90 min) in v1?
+- ~~Should duration be selectable from the menu (e.g. 25 / 50 / 90 min) in v1?~~ Yes, see [PRD-0008](prd-0008-focus-duration.md).
