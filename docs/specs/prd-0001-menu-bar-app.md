@@ -30,8 +30,8 @@ A focus tool must be available instantly, without itself becoming another window
 1. The app is a menu-bar-only agent app (`LSUIElement = YES`): no Dock icon, no app-switcher entry.
 2. On launch, an icon is added to the menu bar via `NSStatusItem` (AppKit) or `MenuBarExtra` (SwiftUI).
 3. The icon reflects state:
-   - **Idle** — default Locus icon.
-   - **Session active** — distinct icon and/or remaining time (e.g. `24:13`).
+   - **Idle** — the Locus fish logo as a monochrome template icon.
+   - **Session active** — the fish with a small red "!" alert badge, plus the remaining time (e.g. `24:13`).
 4. Clicking the icon while idle starts a focus session on the currently active window.
 5. The menu (or a secondary click) contains:
    - **Start Focus Session** (idle only)

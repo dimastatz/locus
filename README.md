@@ -14,7 +14,7 @@ Deep work on a laptop is hard when email, Slack, social networks, browsers and Y
 Locus locks the app you're working in. One click puts its window in full screen and starts a timer. Until the timer runs out, leaving that app means holding an Exit button for 25 seconds. That's long enough to notice what you're doing and change your mind.
 
 ## Features
-- **Lives in the menu bar.** No Dock icon and no window to manage. The icon shows a countdown during a session.
+- **Lives in the menu bar.** No Dock icon and no window to manage. The Locus fish sits in the menu bar; during a session it gets a red alert badge and a countdown.
 - **One-click lock.** Click the icon and the app you're in goes full screen for a 25-minute session.
 - **Exit protection.** ⌘Q, ⌘H, ⌘M, ⌘Tab, the full-screen shortcut and switching Spaces bring you back and ask "Are you sure you want to exit?"
 - **Hold to exit.** Ending early means holding **Exit** for 25 seconds. Let go or drag off and it starts over. **Go Back** (or Return/Esc) returns you to work.
@@ -36,7 +36,7 @@ On first launch, grant Locus Accessibility access in **System Settings → Priva
 
 ## Usage
 1. Click into the app you want to focus on.
-2. Click the lock icon in the menu bar. The window goes full screen and a 25-minute countdown starts in the menu bar.
+2. Click the Locus fish in the menu bar. The window goes full screen and a 25-minute countdown starts in the menu bar.
 3. Trying to leave brings you back and asks "Are you sure you want to exit?" **Go Back** returns you to work; holding **Exit** for 25 seconds ends the session.
 4. When the timer ends, the lock is released and you get a notification.
 
