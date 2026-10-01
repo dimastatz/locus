@@ -62,7 +62,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         if let session = sessions.session {
             let remaining = Countdown.format(session.remaining(at: Date()))
-            let info = NSMenuItem(title: "\(session.target.appName) locked · \(remaining) left", action: nil, keyEquivalent: "")
+            let info = NSMenuItem(
+                title: "\(session.target.appName) locked · \(remaining) left", action: nil, keyEquivalent: "")
             info.isEnabled = false
             menu.addItem(info)
             menu.addItem(item("End Session Early…", #selector(promptUnlock)))
@@ -110,11 +111,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func startSession() {
         guard !sessions.isActive else { return }
         guard Accessibility.isTrusted else {
-            showAccessibilityAlert()
+            Alerts.showAccessibilityRequired()
             return
         }
         guard let app = targetApp() else {
-            showError("Nothing to lock", "Click into the app you want to focus on, then click the Locus icon.")
+            Alerts.showError("Nothing to lock", "Click into the app you want to focus on, then click the Locus icon.")
             return
         }
         if vault.hasPassword {
@@ -136,11 +137,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func lock(_ app: NSRunningApplication) {
         let name = app.localizedName ?? "This app"
         guard let window = LockedWindow(app: app) else {
-            showError("Can't lock \(name)", "Locus couldn't find a window to lock. Open a window in \(name) and try again.")
+            Alerts.showError(
+                "Can't lock \(name)", "Locus couldn't find a window to lock. Open a window in \(name) and try again.")
             return
         }
         guard window.isFullScreen || window.supportsFullScreen else {
-            showError("\(name) doesn't support full screen", "Locus locks a window by putting it in full screen, which \(name) doesn't allow.")
+            Alerts.showError(
+                "\(name) doesn't support full screen",
+                "Locus locks a window by putting it in full screen, which \(name) doesn't allow.")
             return
         }
 
@@ -148,7 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             try sessions.start(target: target, now: Date())
         } catch {
-            showError("Couldn't start a focus session", "\(error)")
+            Alerts.showError("Couldn't start a focus session", "\(error)")
             return
         }
 
@@ -226,7 +230,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let remaining = Countdown.format(session.remaining(at: Date()))
         let prompt = PasswordPrompt(
             title: "Stay focused",
-            message: "\(remaining) left on \(session.target.appName). To end the session early, type your unlock password.",
+            message:
+                "\(remaining) left on \(session.target.appName). To end the session early, type your unlock password.",
             placeholders: ["Unlock password"],
             confirmTitle: "Unlock"
         )
@@ -272,7 +277,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func promptPasswordSetup(then completion: (() -> Void)?) {
         let prompt = PasswordPrompt(
             title: "Set Unlock Password",
-            message: "Choose a long password, at least \(PasswordVault.minimumLength) characters. You'll have to type it to end a focus session early, so it should be tedious to type.",
+            message: """
+                Choose a long password, at least \(PasswordVault.minimumLength) characters. \
+                You'll have to type it to end a focus session early, so it should be tedious to type.
+                """,
             placeholders: ["New password", "Confirm password"],
             confirmTitle: "Save"
         )
@@ -305,34 +313,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         prompt.show()
     }
 
-    private func showAccessibilityAlert() {
-        let alert = NSAlert()
-        alert.messageText = "Locus needs Accessibility access"
-        alert.informativeText = "Locus uses Accessibility to put the app you're focusing on into full screen and keep it there. Turn on Locus in System Settings → Privacy & Security → Accessibility, then try again."
-        alert.addButton(withTitle: "Open System Settings")
-        alert.addButton(withTitle: "Cancel")
-        NSApp.activate(ignoringOtherApps: true)
-        if alert.runModal() == .alertFirstButtonReturn {
-            Accessibility.openSettings()
-        }
-    }
-
-    private func showError(_ title: String, _ message: String) {
-        let alert = NSAlert()
-        alert.messageText = title
-        alert.informativeText = message
-        NSApp.activate(ignoringOtherApps: true)
-        alert.runModal()
-    }
-
     private func observeWorkspace() {
         lastExternalApp = NSWorkspace.shared.frontmostApplication
         let center = NSWorkspace.shared.notificationCenter
         workspaceObservers = [
-            center.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) { [weak self] note in
+            center.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) {
+                [weak self] note in
                 guard let self,
-                      let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
-                      app.processIdentifier != self.ownProcessID
+                    let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
+                    app.processIdentifier != self.ownProcessID
                 else { return }
                 self.lastExternalApp = app
             },

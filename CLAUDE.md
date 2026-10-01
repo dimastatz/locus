@@ -38,8 +38,17 @@ Swift package, no Xcode project (builds with the Command Line Tools alone).
 
 ## Commands
 - Test: `./scripts/test.sh` (adds Swift Testing search paths when only the Command Line Tools are installed)
+- Coverage gate: `./scripts/coverage.sh [min]`. Fails below 95% line coverage of `LocusCore`; the AppKit target isn't unit tested.
+- Format: `./scripts/format.sh` (swift-format, config in `.swift-format`)
+- Lint: `./scripts/lint.sh` (`swift format lint --strict` + `swiftlint --strict`, config in `.swiftlint.yml`; needs `brew install swiftlint`)
 - Build: `swift build`
 - Bundle: `./scripts/build-app.sh` → `build/Locus.app` (ad-hoc signed; set `CODESIGN_IDENTITY` to sign properly)
+
+Before committing, run `./scripts/format.sh`, `./scripts/lint.sh` and `./scripts/coverage.sh`. CI runs the same scripts.
+
+## CI/CD
+- `.github/workflows/ci.yml`: on PRs and pushes to `main`, runs format & lint, tests with the 95% coverage gate, then builds `Locus.app` and uploads it as an artifact.
+- `.github/workflows/release.yml`: on a `v*` tag, runs the same checks and publishes a GitHub release with the zipped app.
 
 ## v1 Decisions (resolving PRD open questions)
 - Password: set once by the user (at least 32 characters, typed, no paste); prompted before the first session; can be changed from the menu while idle.

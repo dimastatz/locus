@@ -5,7 +5,7 @@ let package = Package(
     name: "Locus",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "Locus", targets: ["Locus"]),
+        .executable(name: "Locus", targets: ["Locus"])
     ],
     targets: [
         // Session, timer, password and shortcut logic. No AppKit, so it can be unit tested.

@@ -86,8 +86,9 @@ final class LockedWindow {
     private static func focusedWindow(of appElement: AXUIElement) -> AXUIElement? {
         var value: CFTypeRef?
         guard AXUIElementCopyAttributeValue(appElement, kAXFocusedWindowAttribute as CFString, &value) == .success,
-              let value, CFGetTypeID(value) == AXUIElementGetTypeID()
+            let value, CFGetTypeID(value) == AXUIElementGetTypeID()
         else { return nil }
+        // swiftlint:disable:next force_cast - the CFGetTypeID check above guarantees the type
         return (value as! AXUIElement)
     }
 }

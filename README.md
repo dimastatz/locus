@@ -2,7 +2,7 @@
 <h1 align="center"> Locus </h1> 
 <h3>Locus is a native macOS app designed to help you lock your focus. Create focused work sessions, reduce distractions, and keep your attention on what matters. Simple, lightweight, and built for deep work — right where you work.
 </br></h3>
-<img src="https://img.shields.io/badge/Progress-50%25-yellow"> <img src="https://img.shields.io/badge/macOS-13%2B-blue"> <img src="https://img.shields.io/badge/Feedback-Welcome-green">
+<img src="https://img.shields.io/badge/Progress-50%25-yellow"> <img src="https://github.com/dimastatz/locus/actions/workflows/ci.yml/badge.svg"> <img src="https://img.shields.io/badge/macOS-13%2B-blue"> <img src="https://img.shields.io/badge/Feedback-Welcome-green">
 </br>
 </br>
 <img src="./docs/images/locus-icon.png" width="256px"> 
@@ -54,8 +54,13 @@ Locus is a commitment device, not parental control. Force-quitting it will relea
 ```sh
 swift build              # debug build
 ./scripts/test.sh        # unit tests (Swift Testing)
+./scripts/coverage.sh    # tests + 95% line-coverage gate
+./scripts/format.sh      # format with swift-format
+./scripts/lint.sh        # swift-format lint + SwiftLint (brew install swiftlint)
 ./scripts/build-app.sh   # app bundle in build/
 ```
+
+CI runs lint, tests with the coverage gate, and the app build on every pull request. Pushing a `v*` tag publishes a GitHub release with the zipped app.
 
 | Path | Contents |
 |---|---|
