@@ -28,3 +28,22 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - Use `NSWorkspace` notifications (e.g. `didActivateApplicationNotification`) to detect when the user switches away from the locked app, and bring it back to the front.
 - Keep the app lightweight: minimal CPU usage while idle and during a session.
 - Keep UI and locking logic separated so the session/timer logic can be unit tested.
+
+## Project Layout
+Swift package, no Xcode project (builds with the Command Line Tools alone).
+- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `PasswordVault` (salted SHA-256 hash behind a `SecretStore`), `BlockedShortcuts`, `Countdown`.
+- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PasswordPrompt` (non-activating panel shown over full screen), `KeychainSecretStore`, `SessionNotifier`.
+- `Tests/LocusCoreTests/`: Swift Testing unit tests for `LocusCore`.
+- `Support/Info.plist`: app bundle plist (`LSUIElement`).
+
+## Commands
+- Test: `./scripts/test.sh` (adds Swift Testing search paths when only the Command Line Tools are installed)
+- Build: `swift build`
+- Bundle: `./scripts/build-app.sh` → `build/Locus.app` (ad-hoc signed; set `CODESIGN_IDENTITY` to sign properly)
+
+## v1 Decisions (resolving PRD open questions)
+- Password: set once by the user (at least 32 characters, typed, no paste); prompted before the first session; can be changed from the menu while idle.
+- Click behavior: left-click starts a 25-minute session immediately; right-click / ⌃-click opens the menu.
+- Apps without full-screen support: the session is refused with an explanation.
+- Locked app quits or crashes: the session ends and the user is notified.
+- Completion: notification with default sound; the window stays in full screen.
