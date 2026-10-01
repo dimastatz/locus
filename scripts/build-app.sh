@@ -15,6 +15,7 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/Locus" "$APP/Contents/MacOS/Locus"
 cp Support/Info.plist "$APP/Contents/Info.plist"
+cp Support/MenuBar/*.png "$APP/Contents/Resources/"
 
 ICONSET=build/Locus.iconset
 rm -rf "$ICONSET"

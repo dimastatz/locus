@@ -89,20 +89,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func render() {
         guard let button = statusItem.button else { return }
         if let session = sessions.session {
-            button.image = symbol("lock.fill")
+            button.image = MenuBarIcon.inSession
             button.title = " " + Countdown.format(session.remaining(at: Date()))
             button.toolTip = "Locus: \(session.target.appName) is locked"
         } else {
-            button.image = symbol("lock.open")
+            button.image = MenuBarIcon.idle
             button.title = ""
             button.toolTip = "Locus: click to lock your focus"
         }
-    }
-
-    private func symbol(_ name: String) -> NSImage? {
-        let image = NSImage(systemSymbolName: name, accessibilityDescription: "Locus")
-        image?.isTemplate = true
-        return image
     }
 
     // MARK: Starting a session (PRD-0002)
