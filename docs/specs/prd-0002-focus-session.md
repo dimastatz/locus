@@ -30,7 +30,7 @@ Deep work fails when other apps are one click away. Losing awareness for just 5 
 2. **Full screen** — the target window is moved into native macOS full-screen mode (`AXFullScreen` attribute). If already full screen, it stays as is.
 3. **Lock** — the session records the target app (bundle ID + PID) and window. Exit attempts are handled by [PRD-0003](prd-0003-exit-protection.md).
 4. **Timer**
-   - Default duration: **25 minutes**.
+   - Default duration: **25 minutes**, configurable from the menu ([PRD-0008](prd-0008-focus-duration.md)).
    - Countdown starts as soon as the window is full screen.
    - Remaining time is shown in the menu bar (`mm:ss`), and optionally as a small unobtrusive overlay.
    - Timer is based on wall-clock end time, so it stays correct across sleep/wake.
@@ -45,5 +45,5 @@ Deep work fails when other apps are one click away. Losing awareness for just 5 
 
 ## Open Questions
 - Should the user confirm the target window before locking (e.g. "Lock *Xcode* for 25 min?")?
-- Should the default duration be configurable in v1?
+- ~~Should the default duration be configurable in v1?~~ Yes, see [PRD-0008](prd-0008-focus-duration.md).
 - What happens with apps that don't support native full screen — maximize instead, or refuse?

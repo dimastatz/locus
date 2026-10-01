@@ -8,6 +8,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let ownProcessID = ProcessInfo.processInfo.processIdentifier
     private let sessions = SessionController()
+    private let focusDuration = FocusDurationSetting()
+    private lazy var durationMenu = DurationMenu(setting: focusDuration)
     private let notifier = SessionNotifier()
 
     private var statusItem: NSStatusItem!
@@ -69,8 +71,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             menu.addItem(info)
             menu.addItem(item("End Session Early…", #selector(promptExit)))
         } else {
-            let minutes = Int(FocusSession.defaultDuration / 60)
-            menu.addItem(item("Start Focus Session (\(minutes) min)", #selector(startSession)))
+            menu.addItem(item("Start Focus Session (\(focusDuration.minutes) min)", #selector(startSession)))
+            menu.addItem(durationMenu.makeItem())
         }
 
         menu.addItem(.separator())
@@ -130,12 +132,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let prompt = StartPrompt(appName: name, duration: FocusSession.defaultDuration)
+        // Read once, so the dialog and the session agree even if the setting changes meanwhile.
+        let duration = focusDuration.duration
+        let prompt = StartPrompt(appName: name, duration: duration)
         prompt.onStart = { [weak self] in
             self?.startPrompt = nil
             // The app may have quit while the dialog was open.
             guard !app.isTerminated else { return }
-            self?.lock(window, name: name)
+            self?.lock(window, name: name, duration: duration)
         }
         prompt.onCancel = { [weak self] in
             self?.startPrompt = nil
@@ -154,11 +158,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return lastExternalApp.flatMap { $0.isTerminated ? nil : $0 }
     }
 
-    private func lock(_ window: LockedWindow, name: String) {
+    private func lock(_ window: LockedWindow, name: String, duration: TimeInterval) {
         let app = window.app
         let target = LockTarget(processID: app.processIdentifier, bundleIdentifier: app.bundleIdentifier, appName: name)
         do {
-            try sessions.start(target: target, now: Date())
+            try sessions.start(target: target, duration: duration, now: Date())
         } catch {
             Alerts.showError("Couldn't start a focus session", "\(error)")
             return

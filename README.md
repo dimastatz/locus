@@ -15,7 +15,7 @@ Locus locks the app you're working in. One click puts its window in full screen 
 
 ## Features
 - **Lives in the menu bar.** No Dock icon and no window to manage. The Locus fish sits in the menu bar in its original colors; during a session it gets a red alert badge and a countdown.
-- **One-click lock.** Click the icon and the app you're in goes full screen for a 25-minute session.
+- **One-click lock.** Click the icon and the app you're in goes full screen for a focus session: 25 minutes by default, or whatever you choose.
 - **Exit protection.** ⌘Q, ⌘H, ⌘M, ⌘Tab, the full-screen shortcut and switching Spaces bring you back and ask "Are you sure you want to exit?"
 - **Hold to exit.** Ending early means holding **Exit** for 25 seconds. Let go or drag off and it starts over. **Go Back** (or Return/Esc) returns you to work.
 - **Ends on its own.** When the timer runs out, the lock is released and you get a notification.
@@ -36,7 +36,7 @@ On first launch, grant Locus Accessibility access in **System Settings → Priva
 
 ## Usage
 1. Click into the app you want to focus on.
-2. Click the Locus fish in the menu bar and confirm with **Start**. The window goes full screen and a 25-minute countdown starts in the menu bar.
+2. Click the Locus fish in the menu bar and confirm with **Start**. The window goes full screen and the countdown (25 minutes by default) starts in the menu bar.
 3. Trying to leave brings you back and asks "Are you sure you want to exit?" **Go Back** returns you to work; holding **Exit** for 25 seconds ends the session.
 4. When the timer ends, the lock is released and you get a notification.
 
@@ -44,6 +44,7 @@ On first launch, grant Locus Accessibility access in **System Settings → Priva
 |---|---|
 | Start a session | Left-click the menu bar icon, then **Start** (or Return) |
 | Open the menu | Right-click or ⌃-click the icon (any click during a session) |
+| Change the session length | Menu → **Focus Duration** → 15 / 25 / 45 / 60 / 90 min or **Custom…** (5–240 min) |
 | End a session early | Menu → **End Session Early…**, then hold **Exit** for 25 seconds |
 
 Locus is a commitment device, not parental control. Force-quitting it will release the lock.
@@ -68,7 +69,6 @@ CI runs lint, tests with the coverage gate, and the app build on every pull requ
 | `docs/specs/` | Product requirements ([PRD-0001](docs/specs/prd-0001-menu-bar-app.md) to [PRD-0004](docs/specs/prd-0004-session-completion.md)) |
 
 ## Roadmap
-- Choose the session length from the menu
 - Launch at login
 - Breaks and repeating sessions (Pomodoro)
 - Session history

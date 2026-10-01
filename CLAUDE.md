@@ -23,6 +23,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0005: Hold to Exit](docs/specs/prd-0005-hold-to-exit.md) (replaces the password unlock from PRD-0003)
 - [PRD-0006: Brand Icon](docs/specs/prd-0006-brand-icon.md) (original-color logo in the menu bar; app icon on every pop-up)
 - [PRD-0007: Confirm Before Locking](docs/specs/prd-0007-confirm-start.md) ("Are you sure you want to start a focus session?")
+- [PRD-0008: Focus Duration Setting](docs/specs/prd-0008-focus-duration.md) (presets and custom 5–240 min, stored in `UserDefaults`)
 
 ## Technical Guidance
 - Language: Swift; target macOS only.
@@ -34,8 +35,8 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 
 ## Project Layout
 Swift package, no Xcode project (builds with the Command Line Tools alone).
-- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `HoldToConfirm` (hold-to-exit progress, reset on interruption), `BlockedShortcuts`, `Countdown`.
-- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PromptPanel` (shared non-activating dialog panel with the app icon), `StartPrompt` ("Are you sure you want to start a focus session?"), `ExitPrompt` ("Are you sure you want to exit?"), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier`, `MenuBarIcon` (fish logo in original colors; red alert badge during a session).
+- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `HoldToConfirm` (hold-to-exit progress, reset on interruption), `FocusDurationSetting` (session length, validation, persistence), `BlockedShortcuts`, `Countdown`.
+- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PromptPanel` (shared non-activating dialog panel with the app icon), `StartPrompt` ("Are you sure you want to start a focus session?"), `DurationMenu` (Focus Duration submenu and custom-duration dialog), `ExitPrompt` ("Are you sure you want to exit?"), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier`, `MenuBarIcon` (fish logo in original colors; red alert badge during a session).
 - `Tests/LocusCoreTests/`: Swift Testing unit tests for `LocusCore`.
 - `Support/Info.plist`: app bundle plist (`LSUIElement`).
 - `Support/MenuBar/`: menu bar icon in the logo's original colors (1×/2×), generated from `docs/images/locus-icon.png` by `swift scripts/make-menubar-icon.swift`.
