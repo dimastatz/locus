@@ -7,15 +7,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private static let transitionGrace: TimeInterval = 2
 
     private let ownProcessID = ProcessInfo.processInfo.processIdentifier
-    private let vault = PasswordVault(store: KeychainSecretStore())
-    private lazy var sessions = SessionController(vault: vault)
+    private let sessions = SessionController()
     private let notifier = SessionNotifier()
 
     private var statusItem: NSStatusItem!
     private var lockedWindow: LockedWindow?
     private var exitGuard: ExitGuard?
     private var ticker: Timer?
-    private var prompt: PasswordPrompt?
+    private var prompt: ExitPrompt?
     private var checksPausedUntil = Date.distantPast
     private var lastExternalApp: NSRunningApplication?
     private var workspaceObservers: [NSObjectProtocol] = []
@@ -31,6 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         render()
         observeWorkspace()
+        LegacyKeychain.removeUnlockPassword()
         notifier.requestAuthorization()
         if !Accessibility.isTrusted {
             Accessibility.requestTrust()
@@ -66,11 +66,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 title: "\(session.target.appName) locked · \(remaining) left", action: nil, keyEquivalent: "")
             info.isEnabled = false
             menu.addItem(info)
-            menu.addItem(item("End Session Early…", #selector(promptUnlock)))
+            menu.addItem(item("End Session Early…", #selector(promptExit)))
         } else {
             let minutes = Int(FocusSession.defaultDuration / 60)
             menu.addItem(item("Start Focus Session (\(minutes) min)", #selector(startSession)))
-            menu.addItem(item("Change Unlock Password…", #selector(changePassword)))
         }
 
         menu.addItem(.separator())
@@ -118,11 +117,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             Alerts.showError("Nothing to lock", "Click into the app you want to focus on, then click the Locus icon.")
             return
         }
-        if vault.hasPassword {
-            lock(app)
-        } else {
-            promptPasswordSetup { [weak self] in self?.lock(app) }
-        }
+        lock(app)
     }
 
     /// The app the user was working in. Clicking a menu bar item doesn't activate
@@ -197,6 +192,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         checkLock()
         render()
+        prompt?.update(message: exitMessage())
     }
 
     /// Fallback for escapes the guard didn't catch: the window left full screen,
@@ -212,7 +208,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if lockedWindow?.hasEscaped == true {
             reclaim()
         }
-        promptUnlock()
+        promptExit()
     }
 
     private func reclaim() {
@@ -220,37 +216,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         checksPausedUntil = Date().addingTimeInterval(Self.transitionGrace)
     }
 
-    @objc private func promptUnlock() {
-        guard let session = sessions.session else { return }
+    // MARK: Hold to exit (PRD-0005)
+
+    @objc private func promptExit() {
+        guard sessions.isActive else { return }
         if let prompt, prompt.isVisible {
             prompt.show()
             return
         }
 
-        let remaining = Countdown.format(session.remaining(at: Date()))
-        let prompt = PasswordPrompt(
-            title: "Stay focused",
-            message:
-                "\(remaining) left on \(session.target.appName). To end the session early, type your unlock password.",
-            placeholders: ["Unlock password"],
-            confirmTitle: "Unlock"
-        )
-        prompt.onSubmit = { [weak self] values in
-            guard let self else { return nil }
-            switch self.sessions.unlock(password: values[0]) {
-            case .unlocked(let ended):
-                self.finish(ended, reason: .unlocked)
-                return nil
-            case .wrongPassword:
-                return "Wrong password. The session is still locked."
-            case .noActiveSession:
-                return nil
-            }
-        }
-        present(prompt) { [weak self] in
-            // Cancelled: hand the keyboard back to the locked window.
+        let prompt = ExitPrompt(message: exitMessage())
+        prompt.onGoBack = { [weak self] in
+            self?.prompt = nil
             self?.lockedWindow?.focus()
         }
+        prompt.onExit = { [weak self] in
+            guard let self, let ended = self.sessions.exitEarly() else { return }
+            self.finish(ended, reason: .exitedEarly)
+        }
+        self.prompt = prompt
+        prompt.show()
+    }
+
+    private func exitMessage() -> String {
+        guard let session = sessions.session else { return "" }
+        let remaining = Countdown.format(session.remaining(at: Date()))
+        return "\(remaining) of focus left on \(session.target.appName)."
     }
 
     // MARK: Ending a session (PRD-0004)
@@ -266,51 +257,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         openPrompt?.close()
         render()
         notifier.sessionEnded(session, reason: reason)
-    }
-
-    // MARK: Password and permissions
-
-    @objc private func changePassword() {
-        promptPasswordSetup(then: nil)
-    }
-
-    private func promptPasswordSetup(then completion: (() -> Void)?) {
-        let prompt = PasswordPrompt(
-            title: "Set Unlock Password",
-            message: """
-                Choose a long password, at least \(PasswordVault.minimumLength) characters. \
-                You'll have to type it to end a focus session early, so it should be tedious to type.
-                """,
-            placeholders: ["New password", "Confirm password"],
-            confirmTitle: "Save"
-        )
-        prompt.onSubmit = { [weak self] values in
-            guard let self else { return nil }
-            do {
-                try self.vault.setPassword(values[0], confirmation: values[1])
-            } catch PasswordError.tooShort(let minimum) {
-                return "The password must be at least \(minimum) characters."
-            } catch PasswordError.mismatch {
-                return "The passwords don't match."
-            } catch {
-                return error.localizedDescription
-            }
-            completion?()
-            return nil
-        }
-        present(prompt, onCancel: nil)
-    }
-
-    private func present(_ prompt: PasswordPrompt, onCancel: (() -> Void)?) {
-        self.prompt?.close()
-        prompt.onClose = { [weak self, weak prompt] in
-            // Still current means it closed without finish() taking it down: cancelled or a setup save.
-            guard let self, let prompt, self.prompt === prompt else { return }
-            self.prompt = nil
-            onCancel?()
-        }
-        self.prompt = prompt
-        prompt.show()
     }
 
     private func observeWorkspace() {

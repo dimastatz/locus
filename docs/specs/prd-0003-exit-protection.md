@@ -2,7 +2,7 @@
 
 | Field   | Value                     |
 |---------|---------------------------|
-| Status  | Draft                     |
+| Status  | Partially superseded by [PRD-0005](prd-0005-hold-to-exit.md): the password unlock is replaced by hold-to-exit; exit detection still applies |
 | Created | 2026-10-01                |
 | Related | [PRD-0001](prd-0001-menu-bar-app.md), [PRD-0002](prd-0002-focus-session.md), [PRD-0004](prd-0004-session-completion.md) |
 
