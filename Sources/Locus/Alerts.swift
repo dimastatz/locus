@@ -2,9 +2,10 @@ import AppKit
 
 /// Modal alerts shown while idle. Never used during a session, where activating
 /// Locus would pull the user out of the locked app's full-screen Space.
+/// Every alert carries the Locus app icon (PRD-0006).
 enum Alerts {
     static func showAccessibilityRequired() {
-        let alert = NSAlert()
+        let alert = makeAlert()
         alert.messageText = "Locus needs Accessibility access"
         alert.informativeText = """
             Locus uses Accessibility to put the app you're focusing on into full screen and keep it there. \
@@ -19,10 +20,16 @@ enum Alerts {
     }
 
     static func showError(_ title: String, _ message: String) {
-        let alert = NSAlert()
+        let alert = makeAlert()
         alert.messageText = title
         alert.informativeText = message
         NSApp.activate(ignoringOtherApps: true)
         alert.runModal()
+    }
+
+    private static func makeAlert() -> NSAlert {
+        let alert = NSAlert()
+        alert.icon = NSApp.applicationIconImage
+        return alert
     }
 }
