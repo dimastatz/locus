@@ -24,6 +24,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0006: Brand Icon](docs/specs/prd-0006-brand-icon.md) (original-color logo in the menu bar; app icon on every pop-up)
 - [PRD-0007: Confirm Before Locking](docs/specs/prd-0007-confirm-start.md) ("Are you sure you want to start a focus session?")
 - [PRD-0008: Focus Duration Setting](docs/specs/prd-0008-focus-duration.md) (presets and custom 5–240 min, stored in `UserDefaults`)
+- [PRD-0009: DMG Package](docs/specs/prd-0009-dmg-package.md) (`scripts/build-dmg.sh` → drag-to-install `Locus-<version>.dmg`)
 
 ## Technical Guidance
 - Language: Swift; target macOS only.
@@ -48,12 +49,13 @@ Swift package, no Xcode project (builds with the Command Line Tools alone).
 - Lint: `./scripts/lint.sh` (`swift format lint --strict` + `swiftlint --strict`, config in `.swiftlint.yml`; needs `brew install swiftlint`)
 - Build: `swift build`
 - Bundle: `./scripts/build-app.sh` → `build/Locus.app` (ad-hoc signed; set `CODESIGN_IDENTITY` to sign properly)
+- DMG: `./scripts/build-dmg.sh [version]` → `build/Locus-<version>.dmg` (Locus.app + /Applications link; version defaults to `CFBundleShortVersionString`; `SKIP_APP_BUILD=1` reuses an existing `build/Locus.app`)
 
 Before committing, run `./scripts/format.sh`, `./scripts/lint.sh` and `./scripts/coverage.sh`. CI runs the same scripts.
 
 ## CI/CD
-- `.github/workflows/ci.yml`: on PRs and pushes to `main`, runs format & lint, tests with the 95% coverage gate, then builds `Locus.app` and uploads it as an artifact.
-- `.github/workflows/release.yml`: on a `v*` tag, runs the same checks and publishes a GitHub release with the zipped app.
+- `.github/workflows/ci.yml`: on PRs and pushes to `main`, runs format & lint, tests with the 95% coverage gate, then builds `Locus.app` and the DMG and uploads both as artifacts.
+- `.github/workflows/release.yml`: on a `v*` tag, runs the same checks and publishes a GitHub release with the DMG and the zipped app.
 
 ## v1 Decisions (resolving PRD open questions)
 - Early exit (PRD-0005): hold Exit for 25 s (`HoldToConfirm.defaultDuration`); no escalation and no accessibility alternative yet. The legacy Keychain password item is deleted at launch.

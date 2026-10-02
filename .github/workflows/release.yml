@@ -1,7 +1,7 @@
 name: Release
 
 # Push a version tag (e.g. `git tag v0.1.0 && git push origin v0.1.0`) to publish
-# a GitHub release with a zipped Locus.app attached.
+# a GitHub release with Locus.dmg and a zipped Locus.app attached.
 on:
   push:
     tags: ["v*"]
@@ -25,11 +25,14 @@ jobs:
         run: ./scripts/build-app.sh
       - name: Zip app bundle
         run: ditto -c -k --keepParent build/Locus.app "build/Locus-${GITHUB_REF_NAME}.zip"
+      - name: Build disk image
+        run: SKIP_APP_BUILD=1 ./scripts/build-dmg.sh "$GITHUB_REF_NAME"
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" "build/Locus-${GITHUB_REF_NAME}.zip" \
+          gh release create "$GITHUB_REF_NAME" \
+            "build/Locus-${GITHUB_REF_NAME#v}.dmg" "build/Locus-${GITHUB_REF_NAME}.zip" \
             --title "Locus $GITHUB_REF_NAME" \
             --generate-notes \
-            --notes "The app is ad-hoc signed and not notarized. On first launch, right-click Locus.app → Open to get past Gatekeeper."
+            --notes "The app is ad-hoc signed and not notarized. On first launch, open the .dmg, drag Locus to Applications, then right-click Locus.app → Open to get past Gatekeeper."

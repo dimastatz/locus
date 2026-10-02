@@ -57,9 +57,10 @@ swift build              # debug build
 ./scripts/format.sh      # format with swift-format
 ./scripts/lint.sh        # swift-format lint + SwiftLint (brew install swiftlint)
 ./scripts/build-app.sh   # app bundle in build/
+./scripts/build-dmg.sh   # drag-to-install disk image: build/Locus-<version>.dmg
 ```
 
-CI runs lint, tests with the coverage gate, and the app build on every pull request. Pushing a `v*` tag publishes a GitHub release with the zipped app.
+CI runs lint, tests with the coverage gate, and the app build on every pull request. Pushing a `v*` tag publishes a GitHub release with the DMG and the zipped app.
 
 | Path | Contents |
 |---|---|
