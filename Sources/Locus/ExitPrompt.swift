@@ -36,6 +36,7 @@ final class ExitPrompt: NSObject {
         exitButton.onInterrupted = { [weak self] in
             self?.hintLabel.stringValue =
                 "Released too early. Hold Exit for \(Int(holdDuration)) seconds to end the session."
+            self?.panel.fitToContent()
         }
 
         let buttons = NSStackView(views: [exitButton, goBack])
@@ -55,6 +56,7 @@ final class ExitPrompt: NSObject {
 
     func update(message: String) {
         messageLabel.stringValue = message
+        panel.fitToContent()
     }
 
     func show() {
