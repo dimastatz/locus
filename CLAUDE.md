@@ -25,6 +25,8 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0007: Confirm Before Locking](docs/specs/prd-0007-confirm-start.md) ("Are you sure you want to start a focus session?")
 - [PRD-0008: Focus Duration Setting](docs/specs/prd-0008-focus-duration.md) (presets and custom 5–240 min, stored in `UserDefaults`)
 - [PRD-0009: DMG Package](docs/specs/prd-0009-dmg-package.md) (`scripts/build-dmg.sh` → drag-to-install `Locus-<version>.dmg`)
+- [PRD-0010: Completion Beep](docs/specs/prd-0010-completion-beep.md) (draft: "beep beep" when the timer runs out)
+- [PRD-0011: macOS Focus During Sessions](docs/specs/prd-0011-macos-focus-mode.md) (draft: Do Not Disturb on at start, off at end, via Shortcuts)
 
 ## Technical Guidance
 - Language: Swift; target macOS only.
