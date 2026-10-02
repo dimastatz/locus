@@ -47,8 +47,12 @@ jobs:
         run: ./scripts/build-app.sh
       - name: Zip app bundle
         run: ditto -c -k --keepParent build/Locus.app build/Locus.zip
+      - name: Build disk image
+        run: SKIP_APP_BUILD=1 ./scripts/build-dmg.sh
       - uses: actions/upload-artifact@v4
         with:
           name: Locus-${{ github.sha }}
-          path: build/Locus.zip
+          path: |
+            build/Locus.zip
+            build/Locus-*.dmg
           retention-days: 14
