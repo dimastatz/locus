@@ -41,11 +41,31 @@ final class PromptPanel: NSPanel {
         layout.orientation = .horizontal
         layout.alignment = .top
         layout.spacing = 16
-        layout.edgeInsets = NSEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        contentView = layout
+        layout.translatesAutoresizingMaskIntoConstraints = false
+
+        // A stack view set directly as the content view loses its edge insets when the
+        // window is sized, clipping the bottom. Pin it inside a container instead.
+        let container = NSView()
+        container.addSubview(layout)
+        let margin: CGFloat = 20
+        NSLayoutConstraint.activate([
+            layout.topAnchor.constraint(equalTo: container.topAnchor, constant: margin),
+            layout.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -margin),
+            layout.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: margin),
+            layout.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -margin),
+        ])
+        contentView = container
+    }
+
+    /// Resizes the panel to its content, e.g. after a label appears or changes.
+    func fitToContent() {
+        guard let contentView else { return }
+        contentView.layoutSubtreeIfNeeded()
+        setContentSize(contentView.fittingSize)
     }
 
     func present() {
+        fitToContent()
         if !isVisible {
             center()
         }

@@ -109,6 +109,7 @@ private final class DurationPrompt: NSObject {
             let range = FocusDurationSetting.allowedMinutes
             errorLabel.stringValue = "Enter a whole number of minutes from \(range.lowerBound) to \(range.upperBound)."
             errorLabel.isHidden = false
+            panel.fitToContent()
             return
         }
         panel.orderOut(nil)
