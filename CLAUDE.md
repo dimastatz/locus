@@ -26,7 +26,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0008: Focus Duration Setting](docs/specs/prd-0008-focus-duration.md) (presets and custom 5–240 min, stored in `UserDefaults`)
 - [PRD-0009: DMG Package](docs/specs/prd-0009-dmg-package.md) (`scripts/build-dmg.sh` → drag-to-install `Locus-<version>.dmg`)
 - [PRD-0010: Completion Beep](docs/specs/prd-0010-completion-beep.md) ("beep beep" when the timer runs out)
-- [PRD-0011: macOS Focus During Sessions](docs/specs/prd-0011-macos-focus-mode.md) (opt-in: Do Not Disturb on at start, off at end, via Shortcuts)
+- [PRD-0011: macOS Focus During Sessions](docs/specs/prd-0011-macos-focus-mode.md) (draft, not implemented: Do Not Disturb on at start, off at end, via Shortcuts)
 
 ## Technical Guidance
 - Language: Swift; target macOS only.
@@ -38,8 +38,8 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 
 ## Project Layout
 Swift package, no Xcode project (builds with the Command Line Tools alone).
-- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `HoldToConfirm` (hold-to-exit progress, reset on interruption), `FocusDurationSetting` (session length, validation, persistence), `CompletionBeep` (beep pattern), `FocusMode` (Focus shortcut names, setting, on/off decisions), `BlockedShortcuts`, `Countdown`.
-- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PromptPanel` (shared non-activating dialog panel with the app icon), `StartPrompt` ("Are you sure you want to start a focus session?"), `DurationMenu` (Focus Duration submenu and custom-duration dialog), `ExitPrompt` ("Are you sure you want to exit?"), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier` (notifications and completion beep), `FocusModeController` (Do Not Disturb setting and `shortcuts run`), `MenuBarIcon` (fish logo in original colors; red alert badge during a session).
+- `Sources/LocusCore/`: pure logic, no AppKit: `SessionController` (session lifecycle), `FocusSession`, `HoldToConfirm` (hold-to-exit progress, reset on interruption), `FocusDurationSetting` (session length, validation, persistence), `CompletionBeep` (beep pattern), `BlockedShortcuts`, `Countdown`.
+- `Sources/Locus/`: the menu bar app: `AppDelegate` (status item, wiring), `LockedWindow` (Accessibility window control), `ExitGuard` (keyboard event tap + `NSWorkspace` observers), `PromptPanel` (shared non-activating dialog panel with the app icon), `StartPrompt` ("Are you sure you want to start a focus session?"), `DurationMenu` (Focus Duration submenu and custom-duration dialog), `ExitPrompt` ("Are you sure you want to exit?"), `HoldButton` (press-and-hold control, mouse only), `LegacyKeychain` (removes the old password item), `SessionNotifier` (notifications and completion beep), `MenuBarIcon` (fish logo in original colors; red alert badge during a session).
 - `Tests/LocusCoreTests/`: Swift Testing unit tests for `LocusCore`.
 - `Support/Info.plist`: app bundle plist (`LSUIElement`).
 - `Support/MenuBar/`: menu bar icon in the logo's original colors (1×/2×), generated from `docs/images/locus-icon.png` by `swift scripts/make-menubar-icon.swift`.
@@ -65,4 +65,3 @@ Before committing, run `./scripts/format.sh`, `./scripts/lint.sh` and `./scripts
 - Apps without full-screen support: the session is refused with an explanation.
 - Locked app quits or crashes: the session ends and the user is notified.
 - Completion: "beep beep" (`Morse`, twice) plus a silent notification; the window stays in full screen.
-- Do Not Disturb (PRD-0011): opt-in; the user creates the "Locus Focus On"/"Locus Focus Off" shortcuts (no bundled files); whether a Focus was already on isn't detected.
