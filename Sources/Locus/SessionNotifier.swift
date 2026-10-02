@@ -2,7 +2,7 @@ import AppKit
 import LocusCore
 import UserNotifications
 
-/// Tells the user a session has ended (PRD-0004).
+/// Tells the user a session has ended (PRD-0004), with a "beep beep" when the time is up (PRD-0010).
 final class SessionNotifier {
     /// UNUserNotificationCenter needs an app bundle; a bare `swift run` binary has none.
     private var center: UNUserNotificationCenter? {
@@ -29,14 +29,31 @@ final class SessionNotifier {
             return
         }
 
+        // The beep replaces the notification sound, and plays even if notifications are off.
+        let beeps = CompletionBeep.plays(for: reason)
+        if beeps {
+            play(.standard)
+        }
         guard let center else {
-            NSSound(named: "Glass")?.play()
+            if !beeps {
+                NSSound(named: "Glass")?.play()
+            }
             return
         }
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
-        content.sound = .default
+        content.sound = beeps ? nil : .default
         center.add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
+    }
+
+    private func play(_ beep: CompletionBeep) {
+        guard let sound = NSSound(named: beep.soundName) else { return }
+        for offset in beep.offsets {
+            // Each beep gets its own copy: a sound that is still playing can't be started again.
+            DispatchQueue.main.asyncAfter(deadline: .now() + offset) {
+                (sound.copy() as? NSSound)?.play()
+            }
+        }
     }
 }
