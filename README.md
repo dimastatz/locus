@@ -18,7 +18,8 @@ Locus locks the app you're working in. One click puts its window in full screen 
 - **One-click lock.** Click the icon and the app you're in goes full screen for a focus session: 25 minutes by default, or whatever you choose.
 - **Exit protection.** ⌘Q, ⌘H, ⌘M, ⌘Tab, the full-screen shortcut and switching Spaces bring you back and ask "Are you sure you want to exit?"
 - **Hold to exit.** Ending early means holding **Exit** for 25 seconds. Let go or drag off and it starts over. **Go Back** (or Return/Esc) returns you to work.
-- **Ends on its own.** When the timer runs out, the lock is released and you get a notification.
+- **Ends on its own.** When the timer runs out, the lock is released, Locus beeps twice and you get a notification.
+- **Quiet while you work.** Optionally turns on Do Not Disturb for the session and off again when it ends.
 
 ## Install
 Locus is built from source for now. You need macOS 13 or later and the Swift toolchain (Xcode or the Command Line Tools).
@@ -38,12 +39,13 @@ On first launch, grant Locus Accessibility access in **System Settings → Priva
 1. Click into the app you want to focus on.
 2. Click the Locus fish in the menu bar and confirm with **Start**. The window goes full screen and the countdown (25 minutes by default) starts in the menu bar.
 3. Trying to leave brings you back and asks "Are you sure you want to exit?" **Go Back** returns you to work; holding **Exit** for 25 seconds ends the session.
-4. When the timer ends, the lock is released and you get a notification.
+4. When the timer ends, the lock is released, Locus beeps twice and you get a notification.
 
 | Action | How |
 |---|---|
 | Start a session | Left-click the menu bar icon, then **Start** (or Return) |
 | Open the menu | Right-click or ⌃-click the icon (any click during a session) |
+| Turn on Do Not Disturb during sessions | Menu → **Turn On Do Not Disturb During Sessions** (one-time setup in Shortcuts) |
 | Change the session length | Menu → **Focus Duration** → 15 / 25 / 45 / 60 / 90 min or **Custom…** (5–240 min) |
 | End a session early | Menu → **End Session Early…**, then hold **Exit** for 25 seconds |
 

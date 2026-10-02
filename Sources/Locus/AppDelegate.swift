@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let focusDuration = FocusDurationSetting()
     private lazy var durationMenu = DurationMenu(setting: focusDuration)
     private let notifier = SessionNotifier()
+    private let focusMode = FocusModeController()
 
     private var statusItem: NSStatusItem!
     private var lockedWindow: LockedWindow?
@@ -73,6 +74,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             menu.addItem(item("Start Focus Session (\(focusDuration.minutes) min)", #selector(startSession)))
             menu.addItem(durationMenu.makeItem())
+            menu.addItem(focusMode.makeItem())
+        }
+        if let warning = focusMode.makeWarningItem() {
+            menu.addItem(warning)
         }
 
         menu.addItem(.separator())
@@ -176,6 +181,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         exitGuard.start()
         self.exitGuard = exitGuard
 
+        focusMode.sessionStarted()
+
         let ticker = Timer(timeInterval: 1, repeats: true) { [weak self] _ in self?.tick() }
         RunLoop.main.add(ticker, forMode: .common)
         self.ticker = ticker
@@ -273,7 +280,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         prompt = nil
         openPrompt?.close()
         render()
-        notifier.sessionEnded(session, reason: reason)
+        focusMode.sessionEnded { [weak self] in
+            self?.notifier.sessionEnded(session, reason: reason)
+        }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        focusMode.appWillTerminate()
     }
 
     private func observeWorkspace() {

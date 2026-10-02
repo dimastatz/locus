@@ -2,7 +2,7 @@
 
 | Field   | Value                     |
 |---------|---------------------------|
-| Status  | Draft                     |
+| Status  | Implemented (v1)          |
 | Created | 2026-10-02                |
 | Amends  | [PRD-0004](prd-0004-session-completion.md): resolves the "sound on completion" open question |
 | Related | [PRD-0011](prd-0011-macos-focus-mode.md) |
@@ -24,7 +24,7 @@ Today completion is announced with a notification and the default notification s
 
 ## Functional Requirements
 1. **When:** only when a session **completes** (the timer reaches `00:00`). No beep on early exit (PRD-0005) or when the locked app quits.
-2. **Sound:** two short beeps ("beep beep") about 0.3 s apart, using a built-in macOS system sound (e.g. `Tink` or `Ping`), so nothing extra is bundled.
+2. **Sound:** two short beeps ("beep beep") 0.3 s apart, using the built-in macOS `Morse` sound, so nothing extra is bundled.
 3. **Played by Locus itself** (`NSSound`), not as the notification sound, so it plays even if notifications are off or silenced.
 4. **No double sound:** the completion notification is posted without its own sound.
 5. **Order:** if Locus turned on a macOS Focus for the session ([PRD-0011](prd-0011-macos-focus-mode.md)), it ends that Focus first, then beeps and posts the notification.
