@@ -27,6 +27,7 @@ Detailed PRDs for each requirement live in `docs/specs/`:
 - [PRD-0009: DMG Package](docs/specs/prd-0009-dmg-package.md) (`scripts/build-dmg.sh` → drag-to-install `Locus-<version>.dmg`)
 - [PRD-0010: Completion Beep](docs/specs/prd-0010-completion-beep.md) ("beep beep" when the timer runs out)
 - [PRD-0011: macOS Focus During Sessions](docs/specs/prd-0011-macos-focus-mode.md) (draft, not implemented: Do Not Disturb on at start, off at end, via Shortcuts)
+- [PRD-0012: Locus Pro](docs/specs/prd-0012-locus-pro.md) (draft: free vs. Pro editions; Pro = focus sets, schedules, stats)
 
 ## Technical Guidance
 - Language: Swift; target macOS only.

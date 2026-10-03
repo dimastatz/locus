@@ -34,7 +34,7 @@ Locus is only available as source or a zipped `Locus.app`. A zip leaves the app 
 6. **Release:** pushing a `v*` tag attaches `Locus-<version>.dmg` to the GitHub release, and the release notes tell users how to install from it.
 
 ## Acceptance Criteria
-- [ ] `./scripts/build-dmg.sh` on a clean checkout produces `build/Locus-0.1.0.dmg`.
+- [ ] `./scripts/build-dmg.sh` on a clean checkout produces `build/Locus-0.2.0.dmg`.
 - [ ] `./scripts/build-dmg.sh v0.2.0` produces `build/Locus-0.2.0.dmg`.
 - [ ] Mounting the image shows `Locus.app` and `Applications`, and dragging Locus onto Applications installs it.
 - [ ] `codesign --verify` passes on `Locus.app` inside the mounted image.
