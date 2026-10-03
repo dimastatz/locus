@@ -35,4 +35,4 @@ jobs:
             "build/Locus-${GITHUB_REF_NAME#v}.dmg" "build/Locus-${GITHUB_REF_NAME}.zip" \
             --title "Locus $GITHUB_REF_NAME" \
             --generate-notes \
-            --notes "The app is ad-hoc signed and not notarized. On first launch, open the .dmg, drag Locus to Applications, then right-click Locus.app → Open to get past Gatekeeper."
+            --notes "The app is ad-hoc signed and not notarized. Open the .dmg and drag Locus to Applications. On first launch macOS blocks it: on macOS 15+, go to System Settings → Privacy & Security → Open Anyway; on macOS 13–14, right-click Locus.app → Open. See the README for details."
