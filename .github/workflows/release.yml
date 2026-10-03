@@ -1,6 +1,6 @@
 name: Release
 
-# Push a version tag (e.g. `git tag v0.1.0 && git push origin v0.1.0`) to publish
+# Push a version tag (e.g. `git tag v0.2.0 && git push origin v0.2.0`) to publish
 # a GitHub release with Locus.dmg and a zipped Locus.app attached.
 on:
   push:
