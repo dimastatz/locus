@@ -26,8 +26,8 @@ Locus needs macOS 13 or later. There are three ways to install it:
 | Method | Best for | Needs |
 |---|---|---|
 | [1. Download the DMG from GitHub](#1-download-the-dmg-from-github) | Most people | Nothing extra |
-| [2. Build the app from source](#2-build-the-app-from-source) | Trying the latest code, development | Swift toolchain |
-| [3. Build a DMG from source](#3-build-a-dmg-from-source) | Installing your own build in Applications, or copying it to another Mac | Swift toolchain |
+| [2. Build the app from source](#2-build-the-app-from-source) | Trying the latest code, development | Swift 5.9+ (Xcode 15+) |
+| [3. Build a DMG from source](#3-build-a-dmg-from-source) | Installing your own build in Applications, or copying it to another Mac | Swift 5.9+ (Xcode 15+) |
 
 ### 1. Download the DMG from GitHub
 1. Open the [Releases page](https://github.com/dimastatz/locus/releases) and download `Locus-<version>.dmg` from the latest release.
@@ -41,7 +41,7 @@ Locus needs macOS 13 or later. There are three ways to install it:
 Each release also has a zipped `Locus.app` (`Locus-v<version>.zip`) if you'd rather not use the DMG; unzip it and move `Locus.app` to Applications.
 
 ### 2. Build the app from source
-You need the Swift toolchain: Xcode, or just the Command Line Tools (`xcode-select --install`).
+You need **Swift 5.9 or later**, which comes with **Xcode 15 or later**, or just the matching Command Line Tools (`xcode-select --install`). Check your version with `swift --version`.
 
 ```sh
 git clone https://github.com/dimastatz/locus.git
@@ -90,6 +90,8 @@ Quit Locus from its menu (right-click the fish → **Quit Locus**), delete `Locu
 Locus is a commitment device, not parental control. Force-quitting it will release the lock.
 
 ## Development
+Running the unit tests needs **Swift 6 or later** (Xcode 16+ or its Command Line Tools), because they use Swift Testing. Building the app only needs Swift 5.9.
+
 ```sh
 swift build              # debug build
 ./scripts/test.sh        # unit tests (Swift Testing)
